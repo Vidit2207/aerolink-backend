@@ -12,7 +12,11 @@ const app = express();
 const port = process.env.PORT || 8000;
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://192.168.0.107:5173"],
+  origin: [
+    "http://localhost:5173",
+    "http://192.168.0.107:5173",
+    "https://ignix-aerolink.vercel.app",
+  ],
   methods: "GET,POST,PUT,DELETE,PATCH,UPDATE,HEAD",
   allowedHeaders:
     "Origin, X-Requested-With, Content-Type, Accept, Authorization",
