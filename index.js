@@ -6,12 +6,13 @@ const {
   clearAllCollections,
 } = require("./config/mongodb.config");
 const { handleError } = require("./middlewares/error.middleware");
+const { accountRouter } = require("./routes");
 
 const app = express();
 const port = process.env.PORT || 8000;
 
 const corsOptions = {
-  origin: ["http://localhost:3000"],
+  origin: ["http://localhost:5173", "http://192.168.0.107:5173"],
   methods: "GET,POST,PUT,DELETE,PATCH,UPDATE,HEAD",
   allowedHeaders:
     "Origin, X-Requested-With, Content-Type, Accept, Authorization",
@@ -30,6 +31,8 @@ app.delete("/connection/reset", async (req, res) => {
 });
 
 app.use("/static", express.static("public"));
+
+app.use("/account", accountRouter);
 
 app.use(handleError);
 connectToServer(app, port);

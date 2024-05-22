@@ -1,7 +1,7 @@
 {
-  "name": "express-mongo-rest-api",
-  "version": "1.1.0",
-  "description": "A template for an Express App that can connect to a MongoDB Database using a URI",
+  "name": "aerolink-backend",
+  "version": "0.0.0",
+  "description": "The backend for AeroLink project under Ignix",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,14 +9,16 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git@github.com:Vidit2207/aerolink-backend.git"
   },
   "author": "Vidit Modi",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.2",
     "prism-logger": "^1.0.0"
   },
