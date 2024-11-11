@@ -1,4 +1,4 @@
-const { AccountCollection } = require("../models");
+const { AccountCollection } = require("../../models/account.models");
 
 const isUser = async (req, res, next) => {
   try {

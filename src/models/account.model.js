@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const accountSchema = mongoose.Schema(
   {
-    //yellow-u// Define the Schema Here
     first_name: {
       type: String,
       trim: true,
@@ -48,11 +47,10 @@ const accountSchema = mongoose.Schema(
     ],
   },
   {
-    //yellow-u// Options like Timestamps Ho Here
     timestamps: true,
   }
 );
 
-const AccountCollection = mongoose.model("account-data", accountSchema);
+const AccountModel = mongoose.model("account-data", accountSchema);
 
-module.exports = AccountCollection;
+module.exports = AccountModel;
