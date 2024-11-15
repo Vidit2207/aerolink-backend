@@ -41,6 +41,7 @@ class App {
     });
     this.app.use("/public", express.static("public"));
     this.app.head("/", async (req, res) => {
+      console.log("Uptime Robot Hit Working");
       new ResponseEntity.Ok(res).setMessage("Uptime Robot Hit Working").send();
     });
     this.app.get("/connection/test", async (req, res) => {
