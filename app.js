@@ -3,6 +3,7 @@ const cors = require("cors");
 const { Database } = require("./src/config");
 const { handleError } = require("./src/middlewares/error.middleware");
 const { AccountRouter } = require("./src/routers");
+const { ResponseEntity } = require("./src/helpers");
 
 class App {
   app = express();
@@ -39,6 +40,9 @@ class App {
       next();
     });
     this.app.use("/public", express.static("public"));
+    this.app.head("/", async (req, res) => {
+      new ResponseEntity.Ok(res).setMessage("Uptime Robot Hit Working").send();
+    });
     this.app.get("/connection/test", async (req, res) => {
       res.send({ status: true, message: "API is working" });
     });
