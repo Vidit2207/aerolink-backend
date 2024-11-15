@@ -164,6 +164,23 @@ class AccountService {
       throw error;
     }
   };
+  static logoutFromOneAccount = async (userAccount, token) => {
+    try {
+      const existingAccount = await new AccountRepository.Builder()
+        .build()
+        .mustExist({ email: userAccount.email });
+
+      const password = Generator.generatePassword();
+      const account = new AccountRepository.Builder(existingAccount)
+        .removeAuthToken(token)
+        .build();
+      await account.update({ email: account.email });
+      return account.getPublicData();
+    } catch (error) {
+      console.log("Error - AccountService - logoutFromOneAccount");
+      throw error;
+    }
+  };
 }
 
 module.exports = AccountService;

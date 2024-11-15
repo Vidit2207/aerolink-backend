@@ -1,6 +1,7 @@
 const express = require("express");
 // const { isUser } = require("../middlewares/auth.middlewares");
 const { AccountController } = require("../controllers");
+const { isUser } = require("../middlewares/auth.middlewares");
 
 // TODO: Parent Class with router and getRouter
 
@@ -32,11 +33,11 @@ class AccountRouter {
     // Done: Login - POST - /login
     this.router.post("/login", AccountController.logInToAccount);
     // Pending: Logout from single account on single device - PUT - /logout
-    // this.router.put(
-    //   "/logout",
-    //   isUser,
-    //   AccountController.logoutFromSingleAccount
-    // );
+    this.router.put(
+      "/logout",
+      isUser,
+      AccountController.logoutFromSingleAccount
+    );
 
     // Pending: Test the Validity of JWT (for other projects) - GET - /auth/jwt
     // this.router.put("/auth/jwt", isUser, AccountController.validateJWT);

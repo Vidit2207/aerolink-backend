@@ -20,6 +20,7 @@ class App {
         "http://192.168.29.15:5173",
         "https://ignix-aerolink.vercel.app",
         "https://ignix-aerolink.netlify.app",
+        "https://aerolinkonline.netlify.app",
       ],
       methods: "GET,POST,PUT,DELETE,PATCH,UPDATE,HEAD",
       allowedHeaders:

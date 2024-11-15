@@ -176,21 +176,20 @@ class AccountController {
   // Pending
   static logoutFromSingleAccount = async (req, res, next) => {
     try {
-      const { email } = req;
-      const account = new Account();
-      await account.read(email);
-      const tokens = account.tokens.filter(
-        (element) => element.token !== req.headers.authorization
-      );
-      account.setTokens(tokens);
-      await account.update();
+      let { account } = req;
+      account = await AccountService.logoutFromOneAccount(account);
+      // const tokens = account.tokens.filter(
+      //   (element) => element.token !== req.headers.authorization
+      // );
+      // account.setTokens(tokens);
+      // await account.update();
 
       //TODO: Send Email
 
       res.send({
         status: true,
         message: "Logged Out Successfully",
-        data: account.getPublicData(),
+        data: account,
       });
     } catch (error) {
       console.log("logoutFromSingleAccount threw an error");

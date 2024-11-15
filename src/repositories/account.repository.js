@@ -384,6 +384,11 @@ class AccountRepository {
       return this;
     }
 
+    removeAuthToken(token) {
+      this.tokens = this.tokens.filter((element) => element.token !== token);
+      return this;
+    }
+
     async verifyPassword(password) {
       return await bcrypt.compare(password, this.password);
     }
