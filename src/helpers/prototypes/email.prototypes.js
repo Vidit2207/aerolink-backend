@@ -1,5 +1,31 @@
 const { Mail } = require("../../config");
 
+class AccountDeletionMail {
+  to = null;
+  subject = null;
+  content = null;
+
+  setTo(to) {
+    this.to = to;
+    return this;
+  }
+  setSubject() {
+    this.subject = "AeroLink account deletion notification";
+    return this;
+  }
+  setContent({ user_id }) {
+    this.content = `Your AeroLink account with User ID-${user_id} has been deleted. You cannot access the account any more.`;
+    return this;
+  }
+
+  build() {
+    return new Mail({
+      to: this.to,
+      subject: this.subject,
+      content: this.content,
+    });
+  }
+}
 class AccountCreationMail {
   to = null;
   subject = null;
@@ -79,4 +105,9 @@ class NewOtpMail {
   }
 }
 
-module.exports = { AccountCreationMail, NewPasswordMail, NewOtpMail };
+module.exports = {
+  AccountCreationMail,
+  NewPasswordMail,
+  NewOtpMail,
+  AccountDeletionMail,
+};

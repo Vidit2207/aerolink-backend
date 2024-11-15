@@ -32,6 +32,12 @@ class App {
     this.app.use(cors(corsOptions));
 
     // Section: Default Routes
+    this.app.use((req, res, next) => {
+      console.log("==========================================");
+      console.log(`Request: ${req.method} ${req.url}`);
+      console.log("------------------------------------------");
+      next();
+    });
     this.app.use("/public", express.static("public"));
     this.app.get("/connection/test", async (req, res) => {
       res.send({ status: true, message: "API is working" });

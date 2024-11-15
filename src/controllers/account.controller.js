@@ -1,11 +1,12 @@
+const { ResponseEntity, ClientError } = require("../helpers");
 const {
   AccountCreationMail,
   NewOtpMail,
   NewPasswordMail,
+  AccountDeletionMail,
 } = require("../helpers/prototypes/email.prototypes");
 const { AccountService } = require("../services");
 
-// TODO: Make Response Object
 class AccountController {
   // Done
   static createNewAccount = async (req, res, next) => {
@@ -14,6 +15,7 @@ class AccountController {
       const { account, password } =
         await AccountService.createNewAccountUsingEmail(email);
 
+      // Mail
       const mail = new AccountCreationMail()
         .setTo(email)
         .setSubject()
@@ -21,11 +23,12 @@ class AccountController {
         .build();
       mail.sendMailWithText();
 
-      res.send({
-        status: true,
-        message: "Account Created Successfully",
-        data: account,
-      });
+      new ResponseEntity.Created(res)
+        .setMessage(
+          "Account Created Successfully. Please check your mail for more details"
+        )
+        .setData(account)
+        .send();
     } catch (error) {
       console.log("Error - Account Controller - Create New Account");
       next(error);
@@ -40,13 +43,12 @@ class AccountController {
         req.body
       );
 
-      //TODO: Send Email
+      //Dropped: TODO: Send Email
 
-      res.send({
-        status: true,
-        message: "Account Updated Successfully",
-        data: account,
-      });
+      new ResponseEntity.Ok(res)
+        .setMessage("Account Updated Successfully")
+        .setData(account)
+        .send();
     } catch (error) {
       console.log("updateExistingAccount threw an error");
       next(error);
@@ -64,11 +66,10 @@ class AccountController {
         });
       }
 
-      res.send({
-        status: true,
-        message: "Account Found Successfully",
-        data: account.getPublicData(),
-      });
+      new ResponseEntity.Ok(res)
+        .setMessage("Account Found Successfully")
+        .setData(account)
+        .send();
     } catch (error) {
       console.log("readSingleAccount threw an error");
       next(error);
@@ -82,13 +83,17 @@ class AccountController {
         query
       );
 
-      //TODO: Send Email
+      new AccountDeletionMail()
+        .setTo(account.email)
+        .setSubject()
+        .setContent({ user_id: account.user_id })
+        .build()
+        .sendMailWithText();
 
-      res.send({
-        status: true,
-        message: "Account Deleted Successfully",
-        data: account,
-      });
+      new ResponseEntity.Ok(res)
+        .setMessage("Account Deleted Successfully")
+        .setData(account)
+        .send();
     } catch (error) {
       console.log("deleteSingleAccount threw an error");
       next(error);
@@ -111,17 +116,18 @@ class AccountController {
     try {
       const { query } = req.query;
       const account = await AccountService.updateOTPUsingEmailOrUserId(query);
+
+      // Mail
       const email = new NewOtpMail()
         .setTo(account.email)
         .setSubject()
         .setContent(account.otp)
         .build();
       email.sendMailWithText();
-      res.send({
-        status: true,
-        message: "OTP is sent to your registered email",
-        // data: account,
-      });
+
+      new ResponseEntity.Ok(res)
+        .setMessage("OTP has been sent. Please check your mail.")
+        .send();
     } catch (error) {
       console.log("generateOTPForAccount threw an error");
       next(error);
@@ -140,11 +146,7 @@ class AccountController {
         return res.status(200).send({ status: false, message: "Invalid OTP" });
       }
 
-      res.send({
-        status: true,
-        message: "OTP Verified",
-        // data: account,
-      });
+      new ResponseEntity.Ok(res).setMessage("OTP has been verified").send();
     } catch (error) {
       console.log("generateOTPForAccount threw an error");
       next(error);
@@ -153,7 +155,6 @@ class AccountController {
   // Done
   static logInToAccount = async (req, res, next) => {
     try {
-      console.log("loog");
       const { query, password } = req.body;
       const { account, token } = await AccountService.logIntoAccount(
         query,
@@ -168,29 +169,29 @@ class AccountController {
         authToken: token,
         data: account,
       });
+
+      new ResponseEntity.Ok(res)
+        .setMessage("Logged In Successfully.")
+        .setData(account)
+        .setAttribute("authToken", token)
+        .send();
     } catch (error) {
       console.log("logInToAccount threw an error");
       next(error);
     }
   };
-  // Pending
+  // Done
   static logoutFromSingleAccount = async (req, res, next) => {
     try {
       let { account } = req;
       account = await AccountService.logoutFromOneAccount(account);
-      // const tokens = account.tokens.filter(
-      //   (element) => element.token !== req.headers.authorization
-      // );
-      // account.setTokens(tokens);
-      // await account.update();
 
       //TODO: Send Email
 
-      res.send({
-        status: true,
-        message: "Logged Out Successfully",
-        data: account,
-      });
+      new ResponseEntity.Ok(res)
+        .setMessage("Logged Out Successfully")
+        .setData(account)
+        .send();
     } catch (error) {
       console.log("logoutFromSingleAccount threw an error");
       next(error);
@@ -201,20 +202,17 @@ class AccountController {
     try {
       const { query } = req.query;
       const { password, confirm_password } = req.body;
+
       if (password !== confirm_password) {
-        return res
-          .status(400)
-          .send({ status: false, message: "Passwords do not match" });
+        throw new ClientError.BadRequest("Passwords do not match");
       }
       const account = await AccountService.changePassword(query, password);
 
       //TODO: Send Email
 
-      res.send({
-        status: true,
-        message: "Password Changed Successfully",
-        // data: account,
-      });
+      new ResponseEntity.Ok(res)
+        .setMessage("Password Changed Successfully")
+        .send();
     } catch (error) {
       console.log("changeAccountPassword threw an error");
       next(error);
@@ -227,6 +225,7 @@ class AccountController {
 
       const { account, password } = await AccountService.resetPassword(query);
 
+      // mail
       const email = new NewPasswordMail()
         .setTo(account.email)
         .setSubject()
@@ -234,11 +233,11 @@ class AccountController {
         .build();
       email.sendMailWithText();
 
-      res.send({
-        status: true,
-        message: "Password Changed Successfully",
-        // data: account,
-      });
+      new ResponseEntity.Ok(res)
+        .setMessage(
+          "Password has been reset. Please check your mail for more details"
+        )
+        .send();
     } catch (error) {
       console.log("resetAccountPassword threw an error");
       next(error);
